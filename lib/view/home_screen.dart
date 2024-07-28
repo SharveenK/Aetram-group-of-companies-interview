@@ -93,97 +93,94 @@ class _HomeScreenState extends State<HomeScreen> {
         builderBuildContext = context;
         return Scaffold(
           appBar: AppBar(),
-          body: Center(
-            child: Consumer<UiStateChangeProvider>(
-              builder: (BuildContext context, UiStateChangeProvider value,
-                  Widget? _) {
-                weatherData = value.weatherDataProviderValue;
-                forecast = value.forecastProviderValue;
-                isTempShownInCelsius =
-                    value.isTempShownCelsiusProviderValue ?? true;
-                newApiResultModel =
-                    value.newApiResultModelProviderValue ?? NewApiResultModel();
-                return SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Align(
-                              alignment: Alignment.topLeft,
-                              child: Text(
-                                _currentAddress ?? '',
-                                style:
-                                    Theme.of(context).textTheme.headlineMedium,
-                              ),
-                            ),
-                          ),
-                          getCacheImage((weatherData != null &&
-                                  weatherData!.weather.isNotEmpty)
-                              ? weatherData!.weather.first.iconUrl
-                              : ''),
-                          (weatherData != null &&
-                                  weatherData!.weather.isNotEmpty)
-                              ? Text(
-                                  weatherData!.weather.first.main,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineMedium,
-                                )
-                              : const Center(
-                                  child: CircularProgressIndicator(),
-                                ),
-                          Text(
-                            (weatherData != null &&
-                                    weatherData!.weather.isNotEmpty)
-                                ? 'L: ${isTempShownInCelsius ? Temperature.changeToCelsius(weatherData!.main.temp_min) : Temperature.changeToFarhenheit(weatherData!.main.temp_min)}° H: ${isTempShownInCelsius ? Temperature.changeToCelsius(weatherData!.main.temp_max) : Temperature.changeToFarhenheit(weatherData!.main.temp_max)}°'
-                                : '',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                          Text(
-                            (weatherData != null &&
-                                    weatherData!.weather.isNotEmpty)
-                                ? weatherData!.weather.first.description
-                                : '',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          (forecast != null && forecast!.list.isNotEmpty)
-                              ? WeatherDailyReport(
-                                  weatherData: [
-                                    for (int i in timeIntervalWeatherData)
-                                      forecast!.list[i].weather[0]
-                                  ],
-                                  dateTime: [
-                                    for (int i in timeIntervalWeatherData)
-                                      forecast!.list[i].dt_txt
-                                  ],
-                                )
-                              : const SizedBox(),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          (newApiResultModel != null &&
-                                  newApiResultModel!.articles != null &&
-                                  newApiResultModel!.articles!.isNotEmpty)
-                              ? Flexible(
-                                  child: ShowSliderWidget(
-                                  newApiResultModel: newApiResultModel!,
-                                ))
-                              : const SizedBox()
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+          body: getHomeScreenContent(),
           endDrawer: _getEndDrawer(),
         );
       }),
+    );
+  }
+
+  Center getHomeScreenContent() {
+    return Center(
+      child: Consumer<UiStateChangeProvider>(
+        builder:
+            (BuildContext context, UiStateChangeProvider value, Widget? _) {
+          weatherData = value.weatherDataProviderValue;
+          forecast = value.forecastProviderValue;
+          isTempShownInCelsius = value.isTempShownCelsiusProviderValue ?? true;
+          newApiResultModel =
+              value.newApiResultModelProviderValue ?? NewApiResultModel();
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          _currentAddress ?? '',
+                          style: Theme.of(context).textTheme.headlineMedium,
+                        ),
+                      ),
+                    ),
+                    getCacheImage(
+                        (weatherData != null && weatherData!.weather.isNotEmpty)
+                            ? weatherData!.weather.first.iconUrl
+                            : ''),
+                    (weatherData != null && weatherData!.weather.isNotEmpty)
+                        ? Text(
+                            weatherData!.weather.first.main,
+                            style: Theme.of(context).textTheme.headlineMedium,
+                          )
+                        : const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                    Text(
+                      (weatherData != null && weatherData!.weather.isNotEmpty)
+                          ? 'L: ${isTempShownInCelsius ? Temperature.changeToCelsius(weatherData!.main.temp_min) : Temperature.changeToFarhenheit(weatherData!.main.temp_min)}° H: ${isTempShownInCelsius ? Temperature.changeToCelsius(weatherData!.main.temp_max) : Temperature.changeToFarhenheit(weatherData!.main.temp_max)}°'
+                          : '',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    Text(
+                      (weatherData != null && weatherData!.weather.isNotEmpty)
+                          ? weatherData!.weather.first.description
+                          : '',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    (forecast != null && forecast!.list.isNotEmpty)
+                        ? WeatherDailyReport(
+                            weatherData: [
+                              for (int i in timeIntervalWeatherData)
+                                forecast!.list[i].weather[0]
+                            ],
+                            dateTime: [
+                              for (int i in timeIntervalWeatherData)
+                                forecast!.list[i].dt_txt
+                            ],
+                          )
+                        : const SizedBox(),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    (newApiResultModel != null &&
+                            newApiResultModel!.articles != null &&
+                            newApiResultModel!.articles!.isNotEmpty)
+                        ? Flexible(
+                            child: ShowSliderWidget(
+                            newApiResultModel: newApiResultModel!,
+                          ))
+                        : const SizedBox()
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
